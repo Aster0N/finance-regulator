@@ -22,57 +22,103 @@
 							>
 						</div>
 						<div class="answer-block">
-							<input class="answer" type="text" />
+							<div class="answers-wrapper">
+								<div @click="fromIncome" class="first-answer">
+									<img
+										class="answer-point"
+										src="./assets/img/arrow-point.svg"
+										alt="arrow"
+									/>
+									<button
+										class="answer-from-income answer-btn"
+									>
+										from income
+									</button>
+								</div>
+								<div @click="fromAmount" class="second-answer">
+									<img
+										class="answer-point"
+										src="./assets/img/arrow-point.svg"
+										alt="arrow"
+									/>
+									<button
+										class="answer-from-amount answer-btn"
+									>
+										from specific amount
+									</button>
+								</div>
+							</div>
 						</div>
 					</div>
+
 					<div class="question">
 						<div class="question-block">
-							<span class="question-number">2.</span>&nbsp;
+							<span class="question-number">2</span>&nbsp;
 							<span class="question-title"
 								>Enter your monetary expenditures</span
 							>
 						</div>
 						<div class="answer-block">
-							<input class="answer" type="text" />
+							<img
+								class="answer-point"
+								src="./assets/img/arrow-point.svg"
+								alt="arrow"
+							/>
+							<span class="answer-section answer-section-2">
+								<input
+									v-model="inputModels.secAnswer"
+									class="answer"
+									type="text"
+								/>
+							</span>
 						</div>
 					</div>
+
 					<div class="question">
 						<div class="question-block">
-							<span class="question-number">3.</span>&nbsp;
+							<span class="question-number">3</span>&nbsp;
 							<span class="question-title"
-								>Money that you can save each month</span
+								>Enter your monetary expenditures</span
 							>
 						</div>
 						<div class="answer-block">
-							<input class="answer" type="text" />
+							<img
+								class="answer-point"
+								src="./assets/img/arrow-point.svg"
+								alt="arrow"
+							/>
+							<span class="answer-section answer-section-3">
+								<input
+									v-model="inputModels.thirdAnswer"
+									class="answer"
+									type="text"
+								/>
+							</span>
 						</div>
 					</div>
+
 					<div class="question">
 						<div class="question-block">
-							<span class="question-number">4.</span>&nbsp;
+							<span class="question-number">4</span>&nbsp;
 							<span class="question-title"
 								>If you are willing to deposit in a bank with
 								interest, please enter the amount and %</span
 							>
 						</div>
 						<div class="answer-block">
-							<input class="answer" type="text" />
+							<img
+								class="answer-point"
+								src="./assets/img/arrow-point.svg"
+								alt="arrow"
+							/>
+							<span class="answer-section answer-section-4">
+								<input
+									v-model="inputModels.fourthAnswer"
+									class="answer"
+									type="text"
+								/>
+							</span>
 						</div>
-					</div>
-
-					<div class="control-buttons">
-						<button
-							@click="goToPrevQuestion"
-							class="control-btn prev-btn"
-						>
-							prev
-						</button>
-						<button
-							@click="goToNextQuestion"
-							class="control-btn next-btn"
-						>
-							next
-						</button>
 					</div>
 				</div>
 			</div>
@@ -85,60 +131,52 @@ export default {
 	name: "App",
 	data() {
 		return {
-			questionsNumber: 0,
-			currentQuestionIndex: 0,
-			questionDisabledClass: "question-disabled",
-			questonActiveClass: "question-active",
+			inputModels: {
+				secAnswer: "",
+				thirdAnswer: "",
+				fourthAnswer: "",
+			},
 		};
 	},
 	methods: {
-		clearQuestionClasses() {
-			const questions = document.querySelectorAll(".question");
-
-			questions.forEach((question) => {
-				if (question.classList.contains(this.questionDisabledClass)) {
-					question.classList.remove(this.questionDisabledClass);
-				} else {
-					question.classList.remove(this.questonActiveClass);
+		watchInput(inputValue, id) {
+			const inputWrapper = document.querySelector(
+				`.answer-section-${id}`
+			);
+			if (/^[0-9]*$/.test(inputValue)) {
+				if (inputWrapper.classList.contains("invalid-input")) {
+					inputWrapper.classList.remove("invalid-input");
 				}
-			});
-		},
-		setQuestionClasses() {
-			const questions = document.querySelectorAll(".question");
-
-			for (let i = 0; i < questions.length; i++) {
-				if (i !== this.currentQuestionIndex) {
-					questions[i].classList.add(this.questionDisabledClass);
-				} else {
-					questions[i].classList.add(this.questonActiveClass);
-				}
+			} else {
+				inputWrapper.classList.add("invalid-input");
 			}
 		},
-		goToPrevQuestion() {
-			this.clearQuestionClasses();
-
-			this.currentQuestionIndex =
-				this.currentQuestionIndex - 1 === -1
-					? this.questionsNumber - 1
-					: this.currentQuestionIndex - 1;
-
-			this.setQuestionClasses();
+		checkPressBtnClass(btn) {
+			if (btn.classList.contains("pressed-btn")) {
+				btn.classList.remove("pressed-btn");
+			} else {
+				btn.classList.add("pressed-btn");
+			}
 		},
-		goToNextQuestion() {
-			this.clearQuestionClasses();
-
-			this.currentQuestionIndex =
-				this.currentQuestionIndex + 1 === this.questionsNumber
-					? 0
-					: this.currentQuestionIndex + 1;
-
-			this.setQuestionClasses();
+		fromIncome() {
+			const clickedButton = document.querySelector(".answer-from-income");
+			this.checkPressBtnClass(clickedButton);
+		},
+		fromAmount() {
+			const clickedButton = document.querySelector(".answer-from-amount");
+			this.checkPressBtnClass(clickedButton);
 		},
 	},
-	mounted() {
-		const questions = document.querySelectorAll(".question");
-		this.questionsNumber = questions.length;
-		this.setQuestionClasses();
+	watch: {
+		"inputModels.secAnswer"(value) {
+			this.watchInput(value, 2);
+		},
+		"inputModels.thirdAnswer"(value) {
+			this.watchInput(value, 3);
+		},
+		"inputModels.fourthAnswer"(value) {
+			this.watchInput(value, 4);
+		},
 	},
 };
 </script>
@@ -149,7 +187,9 @@ export default {
 
 .welcome-page {
 	height: 100vh;
-	background-color: $secondary-color;
+	background: url("./assets/img/welcome-page-bg.svg") no-repeat center center;
+	background-color: $light-blue;
+
 	.workflow-body {
 		height: 100%;
 		width: 100%;
@@ -157,29 +197,83 @@ export default {
 	}
 	.page-title {
 		width: 100%;
-		padding: 150px 0 0 0;
+		padding: 100px 0 0 0;
 		text-align: center;
 		font-family: "Montserrat", serif;
 		font-size: 40px;
 		font-weight: regular;
 		text-transform: uppercase;
 		letter-spacing: 30px;
+		color: #fff;
 	}
 }
 
 .regulator-core {
-	height: 100vh;
-	background-color: $primary-color;
+	padding: 200px 0 200px 0;
+	background-color: $light-blue;
 	font-family: "Palanquin", sans-serif;
 	font-size: 20px;
 	color: #fff;
 
-	.question {
-		font-weight: bold;
-	}
-}
+	.calculation-settings {
+		width: 990px;
+		padding: 50px 60px;
+		background-color: $primary-color;
 
-.question-disabled {
-	display: none;
+		.question {
+			font-weight: bold;
+
+			.question-block {
+				margin: 0 0 15px 0;
+			}
+			.answer-block {
+				.answer-point {
+					margin: 0 15px 0 0;
+				}
+			}
+		}
+	}
+
+	.answer-btn {
+		background-color: transparent;
+		outline: none;
+		border: none;
+		color: #fff;
+		font-size: 20px;
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+	.pressed-btn {
+		text-decoration: underline;
+	}
+
+	.answers-wrapper {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		column-gap: 70px;
+	}
+	.question:not(:last-child) {
+		margin: 0 0 20px 0;
+	}
+
+	.answer-section {
+		border-bottom: 1px solid #fff;
+
+		.answer {
+			background-color: transparent;
+			outline: none;
+			border: none;
+			position: relative;
+			color: #fff;
+			font-size: 18px;
+		}
+	}
+	.answer-section.invalid-input {
+		border-bottom: 1px solid #e74c3c;
+	}
 }
 </style>
