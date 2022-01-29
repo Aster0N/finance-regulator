@@ -21,7 +21,7 @@
 								amount?</span
 							>
 						</div>
-						<div class="answer-block">
+						<div class="answer-block answer-block-1">
 							<div class="answers-wrapper">
 								<div @click="fromIncome" class="first-answer">
 									<img
@@ -30,7 +30,10 @@
 										alt="arrow"
 									/>
 									<button
-										class="answer-from-income answer-btn"
+										class="
+											answer-from-income answer-btn
+											pressed-btn
+										"
 									>
 										from income
 									</button>
@@ -48,6 +51,23 @@
 									</button>
 								</div>
 							</div>
+						</div>
+						<div class="answer-block answer-block-2">
+							<span class="answer-title" v-if="isFromIncome">
+								Enter your income:
+							</span>
+							<span
+								class="asnwer-title"
+								v-if="isFromSpecificAmount"
+							>
+								Enter the amount of money: </span
+							><br />
+							<span class="answer-section answer-section-1">
+								<input
+									v-model="inputModels.firstAnswer"
+									class="answer"
+									type="text"
+							/></span>
 						</div>
 					</div>
 
@@ -120,6 +140,20 @@
 							</span>
 						</div>
 					</div>
+
+					<div class="calculate-btn-wrapper">
+						<button
+							:class="{
+								'calculate-disabled':
+									isAnyError || emptyInputFields(),
+							}"
+							class="calculate-btn"
+							:disabled="isAnyError || emptyInputFields()"
+							@click="calculate"
+						>
+							calculate
+						</button>
+					</div>
 				</div>
 			</div>
 		</main>
@@ -132,10 +166,22 @@ export default {
 	data() {
 		return {
 			inputModels: {
+				firstAnswer: "",
 				secAnswer: "",
 				thirdAnswer: "",
 				fourthAnswer: "",
 			},
+			emptyInputFields() {
+				for (let key in this.inputModels) {
+					if (!this.inputModels[key]) {
+						return true;
+					}
+				}
+				return false;
+			},
+			isFromIncome: true,
+			isFromSpecificAmount: false,
+			isAnyError: false,
 		};
 	},
 	methods: {
@@ -146,16 +192,25 @@ export default {
 			if (/^[0-9]*$/.test(inputValue)) {
 				if (inputWrapper.classList.contains("invalid-input")) {
 					inputWrapper.classList.remove("invalid-input");
+					this.isAnyError = false;
 				}
 			} else {
 				inputWrapper.classList.add("invalid-input");
+				this.isAnyError = true;
 			}
 		},
 		checkPressBtnClass(btn) {
-			if (btn.classList.contains("pressed-btn")) {
-				btn.classList.remove("pressed-btn");
-			} else {
+			const anothertBtn = btn.classList.contains("answer-from-income")
+				? document.querySelector(".answer-from-amount")
+				: document.querySelector(".answer-from-income");
+			if (anothertBtn.classList.contains("pressed-btn")) {
+				anothertBtn.classList.remove("pressed-btn");
+			}
+
+			if (!btn.classList.contains("pressed-btn")) {
 				btn.classList.add("pressed-btn");
+				this.isFromIncome = !this.isFromIncome;
+				this.isFromSpecificAmount = !this.isFromSpecificAmount;
 			}
 		},
 		fromIncome() {
@@ -166,8 +221,14 @@ export default {
 			const clickedButton = document.querySelector(".answer-from-amount");
 			this.checkPressBtnClass(clickedButton);
 		},
+		calculate() {
+			console.log("calculate");
+		},
 	},
 	watch: {
+		"inputModels.firstAnswer"(value) {
+			this.watchInput(value, 1);
+		},
 		"inputModels.secAnswer"(value) {
 			this.watchInput(value, 2);
 		},
@@ -177,6 +238,15 @@ export default {
 		"inputModels.fourthAnswer"(value) {
 			this.watchInput(value, 4);
 		},
+	},
+	mounted() {
+		const calculateBtn = document.querySelector(".calculate-btn");
+		calculateBtn.addEventListener("mouseenter", () => {
+			calculateBtn.classList.add("calculate-hover");
+		});
+		calculateBtn.addEventListener("mouseleave", () => {
+			calculateBtn.classList.remove("calculate-hover");
+		});
 	},
 };
 </script>
@@ -197,7 +267,7 @@ export default {
 	}
 	.page-title {
 		width: 100%;
-		padding: 100px 0 0 0;
+		padding: 160px 0 0 0;
 		text-align: center;
 		font-family: "Montserrat", serif;
 		font-size: 40px;
@@ -231,6 +301,31 @@ export default {
 					margin: 0 15px 0 0;
 				}
 			}
+		}
+
+		.calculate-btn {
+			text-transform: uppercase;
+			color: #000;
+			display: inline-block;
+			text-align: center;
+			padding: 10px 20px;
+			margin: 20px 0 0 0;
+			font-size: 25px;
+			font-weight: light;
+			cursor: pointer;
+			outline: none;
+			border: 1px solid transparent;
+			background-color: $light-blue;
+			user-select: none;
+			transition: all 0.3s ease;
+		}
+		.calculate-btn.calculate-hover {
+			border: 1px solid $yellow-color;
+			transform: translateX(10px);
+		}
+		.calculate-btn.calculate-disabled {
+			opacity: 0.8;
+			cursor: default;
 		}
 	}
 

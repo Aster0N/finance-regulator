@@ -13,7 +13,7 @@
 <path d="M606.5 561.5C281.7 573.1 164.167 398.667 146 310V75H2066V309C1941.5 371.833 1630.8 489.5 1384 457.5C899 432.5 857.5 543.5 606.5 561.5Z" fill="#12556F"/>
 </g>
 <g filter="url(#filter0_d_37_2)">
-<rect x="146" y="116" width="1920" height="100" fill="#12556F"/>
+<rect x="146" y="105" width="1920" height="100" fill="#12556F"/>
 </g>
 <defs>
 <filter id="filter0_d_37_2" x="0" y="0" width="2212" height="392" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
