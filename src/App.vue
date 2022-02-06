@@ -64,7 +64,7 @@
 							><br />
 							<span class="answer-section answer-section-1">
 								<input
-									v-model="inputModels.firstAnswer"
+									v-model="inputModels.usersMoney"
 									class="answer"
 									type="text"
 							/></span>
@@ -86,7 +86,7 @@
 							/>
 							<span class="answer-section answer-section-2">
 								<input
-									v-model="inputModels.secAnswer"
+									v-model="inputModels.usersExpenditures"
 									class="answer"
 									type="text"
 								/>
@@ -98,7 +98,7 @@
 						<div class="question-block">
 							<span class="question-number">3</span>&nbsp;
 							<span class="question-title"
-								>Enter your monetary expenditures</span
+								>Money that you can save each month</span
 							>
 						</div>
 						<div class="answer-block">
@@ -109,7 +109,7 @@
 							/>
 							<span class="answer-section answer-section-3">
 								<input
-									v-model="inputModels.thirdAnswer"
+									v-model="inputModels.moneyToSave"
 									class="answer"
 									type="text"
 								/>
@@ -125,19 +125,48 @@
 								interest, please enter the amount and %</span
 							>
 						</div>
-						<div class="answer-block">
-							<img
-								class="answer-point"
-								src="./assets/img/arrow-point.svg"
-								alt="arrow"
-							/>
-							<span class="answer-section answer-section-4">
-								<input
-									v-model="inputModels.fourthAnswer"
-									class="answer"
-									type="text"
+						<div class="warning-title">
+							Considering that interest is accrued on the entire
+							current amount, not on the amount of the deposit.
+						</div>
+						<div class="answer-block answer-block-4">
+							<div>
+								<span class="answer-title"
+									>Amount of money:</span
+								><br />
+								<img
+									class="answer-point"
+									src="./assets/img/arrow-point.svg"
+									alt="arrow"
 								/>
-							</span>
+								<span class="answer-section answer-section-4">
+									<input
+										v-model="
+											inputModels.usersInvestments.amount
+										"
+										class="answer"
+										type="text"
+									/>
+								</span>
+							</div>
+							<div>
+								<span class="answer-title"> Percent:</span
+								><br />
+								<img
+									class="answer-point"
+									src="./assets/img/arrow-point.svg"
+									alt="arrow"
+								/>
+								<span class="answer-section answer-section-5">
+									<input
+										v-model="
+											inputModels.usersInvestments.percent
+										"
+										class="answer"
+										type="text"
+									/>
+								</span>
+							</div>
 						</div>
 					</div>
 
@@ -166,14 +195,17 @@ export default {
 	data() {
 		return {
 			inputModels: {
-				firstAnswer: "",
-				secAnswer: "",
-				thirdAnswer: "",
-				fourthAnswer: "",
+				usersMoney: "",
+				usersExpenditures: "",
+				moneyToSave: "",
+				usersInvestments: {
+					amount: "",
+					percent: "",
+				},
 			},
 			emptyInputFields() {
 				for (let key in this.inputModels) {
-					if (!this.inputModels[key]) {
+					if (!this.inputModels[key] && key !== "usersInvestments") {
 						return true;
 					}
 				}
@@ -182,6 +214,7 @@ export default {
 			isFromIncome: true,
 			isFromSpecificAmount: false,
 			isAnyError: false,
+			maxPeriod: 10,
 		};
 	},
 	methods: {
@@ -221,22 +254,62 @@ export default {
 			const clickedButton = document.querySelector(".answer-from-amount");
 			this.checkPressBtnClass(clickedButton);
 		},
+		getMoneyAfterPeriod(period, moneyToSave, investments) {
+			const percent = parseInt(investments.percent) / 100;
+
+			let justSavedMoney = Math.floor(moneyToSave * period * 12);
+			let investmentSavings = Math.floor(
+				parseInt(investments.amount) * percent
+			);
+			// let saveAndInvest = Math.floor(
+			// 	(parseInt(investments.amount) + moneyToSave * 12) * percent
+			// );
+
+			return { justSavedMoney, investmentSavings };
+		},
 		calculate() {
-			console.log("calculate");
+			let moneyToSave = parseInt(this.inputModels.moneyToSave);
+			let investments = this.inputModels.usersInvestments;
+			let currentInvestmentsSavings = parseInt(investments.amount);
+			let currentMoneySavings = 0;
+
+			for (let year = 1; year <= this.maxPeriod; year++) {
+				let usersSavings = this.getMoneyAfterPeriod(year, moneyToSave, {
+					amount: currentInvestmentsSavings,
+					percent: investments.percent,
+				});
+
+				currentInvestmentsSavings += usersSavings.investmentSavings;
+
+				currentMoneySavings = usersSavings.justSavedMoney;
+
+				console.table(usersSavings);
+				console.log(currentMoneySavings, currentInvestmentsSavings);
+			}
+			const output = {
+				currentMoneySavings,
+				currentInvestmentsSavings,
+			};
+			console.log("OUTPUT:");
+			console.table(output);
+			return output;
 		},
 	},
 	watch: {
-		"inputModels.firstAnswer"(value) {
+		"inputModels.usersMoney"(value) {
 			this.watchInput(value, 1);
 		},
-		"inputModels.secAnswer"(value) {
+		"inputModels.usersExpenditures"(value) {
 			this.watchInput(value, 2);
 		},
-		"inputModels.thirdAnswer"(value) {
+		"inputModels.moneyToSave"(value) {
 			this.watchInput(value, 3);
 		},
-		"inputModels.fourthAnswer"(value) {
+		"inputModels.usersInvestments.amount"(value) {
 			this.watchInput(value, 4);
+		},
+		"inputModels.usersInvestments.percent"(value) {
+			this.watchInput(value, 5);
 		},
 	},
 	mounted() {
@@ -300,6 +373,12 @@ export default {
 				.answer-point {
 					margin: 0 15px 0 0;
 				}
+			}
+			.answer-block-4 {
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				column-gap: 50px;
 			}
 		}
 
@@ -369,6 +448,13 @@ export default {
 	}
 	.answer-section.invalid-input {
 		border-bottom: 1px solid #e74c3c;
+	}
+	.answer-section-1 {
+		margin: 0 0 0 38px;
+	}
+	.warning-title {
+		padding: 10px;
+		background-color: rgba(#4dad45, 0.4);
 	}
 }
 </style>
