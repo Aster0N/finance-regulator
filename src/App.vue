@@ -215,6 +215,7 @@ export default {
 			isFromSpecificAmount: false,
 			isAnyError: false,
 			maxPeriod: 10,
+			usersSavings: {},
 		};
 	},
 	methods: {
@@ -254,44 +255,55 @@ export default {
 			const clickedButton = document.querySelector(".answer-from-amount");
 			this.checkPressBtnClass(clickedButton);
 		},
-		getMoneyAfterPeriod(period, moneyToSave, investments) {
+		getMoneyAfterPeriod(
+			period,
+			moneyToSave,
+			investments,
+			saveAndInvestMoney
+		) {
 			const percent = parseInt(investments.percent) / 100;
 
 			let justSavedMoney = Math.floor(moneyToSave * period * 12);
 			let investmentSavings = Math.floor(
 				parseInt(investments.amount) * percent
 			);
-			// let saveAndInvest = Math.floor(
-			// 	(parseInt(investments.amount) + moneyToSave * 12) * percent
-			// );
+			let saveAndInvest = Math.floor(
+				(saveAndInvestMoney + moneyToSave * 12) * percent
+			);
 
-			return { justSavedMoney, investmentSavings };
+			return { justSavedMoney, investmentSavings, saveAndInvest };
 		},
 		calculate() {
 			let moneyToSave = parseInt(this.inputModels.moneyToSave);
 			let investments = this.inputModels.usersInvestments;
 			let currentInvestmentsSavings = parseInt(investments.amount);
+			let currentSaveAndInvestMoney = currentInvestmentsSavings;
 			let currentMoneySavings = 0;
 
 			for (let year = 1; year <= this.maxPeriod; year++) {
-				let usersSavings = this.getMoneyAfterPeriod(year, moneyToSave, {
-					amount: currentInvestmentsSavings,
-					percent: investments.percent,
-				});
+				let usersSavings = this.getMoneyAfterPeriod(
+					year,
+					moneyToSave,
+					{
+						amount: currentInvestmentsSavings,
+						percent: investments.percent,
+					},
+					currentSaveAndInvestMoney
+				);
 
 				currentInvestmentsSavings += usersSavings.investmentSavings;
 
 				currentMoneySavings = usersSavings.justSavedMoney;
 
-				console.table(usersSavings);
-				console.log(currentMoneySavings, currentInvestmentsSavings);
+				currentSaveAndInvestMoney +=
+					usersSavings.saveAndInvest + moneyToSave * 12;
 			}
 			const output = {
 				currentMoneySavings,
 				currentInvestmentsSavings,
+				currentSaveAndInvestMoney,
 			};
-			console.log("OUTPUT:");
-			console.table(output);
+			this.usersSavings = output;
 			return output;
 		},
 	},
