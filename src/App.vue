@@ -208,16 +208,19 @@
 								</div>
 							</div>
 						</div>
-						<div class="warning-message" v-if="isAnyError">
-							The entered values must not:
-							<ul>
-								<li>be negative</li>
-								<li>start with zero</li>
-								<li>
-									contain all symbols except integer numbers
-								</li>
-							</ul>
-						</div>
+						<transition name="message-fade">
+							<div class="warning-message" v-if="isAnyError">
+								The entered values must not:
+								<ul>
+									<li>be negative</li>
+									<li>start with zero</li>
+									<li>
+										contain all symbols except integer
+										numbers
+									</li>
+								</ul>
+							</div>
+						</transition>
 					</div>
 					<div class="calculate-btn-wrapper">
 						<button
@@ -437,6 +440,15 @@ export default {
 				padding: 10px;
 				width: 300px;
 				background-color: rgba(#ff4757, 0.4);
+			}
+
+			.message-fade-enter-active,
+			.message-fade-leave-active {
+				transition: opacity 0.4s;
+			}
+			.message-fade-enter,
+			.message-fade-leave-to {
+				opacity: 0;
 			}
 		}
 		.question {
