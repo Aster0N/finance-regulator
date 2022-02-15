@@ -13,163 +13,212 @@
 		<main class="regulator-core">
 			<div class="container">
 				<div class="calculation-settings">
-					<div class="question">
-						<div class="question-block">
-							<span class="question-number">1.</span>&nbsp;
-							<span class="question-title"
-								>Count from your income or specific
-								amount?</span
-							>
-						</div>
-						<div class="answer-block answer-block-1">
-							<div class="answers-wrapper">
-								<div @click="fromIncome" class="first-answer">
+					<div class="questions-wrapper">
+						<div class="questions-block">
+							<div class="question">
+								<div class="question-block">
+									<span class="question-number">1.</span
+									>&nbsp;
+									<span class="question-title"
+										>Count from your income or specific
+										amount?</span
+									>
+								</div>
+								<div class="answer-block answer-block-1">
+									<div class="answers-wrapper">
+										<div
+											@click="fromIncome"
+											class="first-answer"
+										>
+											<img
+												class="answer-point"
+												src="./assets/img/arrow-point.svg"
+												alt="arrow"
+											/>
+											<button
+												class="
+													answer-from-income
+													answer-btn
+													pressed-btn
+												"
+											>
+												from income
+											</button>
+										</div>
+										<div
+											@click="fromAmount"
+											class="second-answer"
+										>
+											<img
+												class="answer-point"
+												src="./assets/img/arrow-point.svg"
+												alt="arrow"
+											/>
+											<button
+												class="
+													answer-from-amount
+													answer-btn
+												"
+											>
+												from specific amount
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="answer-block answer-block-2">
+									<span
+										class="answer-title"
+										v-if="isFromIncome"
+									>
+										Enter your income:
+									</span>
+									<span
+										class="asnwer-title"
+										v-if="isFromSpecificAmount"
+									>
+										Enter the amount of money: </span
+									><br />
+									<span
+										class="answer-section answer-section-1"
+									>
+										<input
+											v-model="inputModels.usersMoney"
+											class="answer"
+											type="text"
+									/></span>
+								</div>
+							</div>
+
+							<div class="question">
+								<div class="question-block">
+									<span class="question-number">2</span>&nbsp;
+									<span class="question-title"
+										>Enter your monetary expenditures</span
+									>
+								</div>
+								<div class="answer-block">
 									<img
 										class="answer-point"
 										src="./assets/img/arrow-point.svg"
 										alt="arrow"
 									/>
-									<button
-										class="
-											answer-from-income answer-btn
-											pressed-btn
-										"
+									<span
+										class="answer-section answer-section-2"
 									>
-										from income
-									</button>
+										<input
+											v-model="
+												inputModels.usersExpenditures
+											"
+											class="answer"
+											type="text"
+										/>
+									</span>
 								</div>
-								<div @click="fromAmount" class="second-answer">
+							</div>
+
+							<div class="question">
+								<div class="question-block">
+									<span class="question-number">3</span>&nbsp;
+									<span class="question-title"
+										>Money that you can save each
+										month</span
+									>
+								</div>
+								<div class="answer-block">
 									<img
 										class="answer-point"
 										src="./assets/img/arrow-point.svg"
 										alt="arrow"
 									/>
-									<button
-										class="answer-from-amount answer-btn"
+									<span
+										class="answer-section answer-section-3"
 									>
-										from specific amount
-									</button>
+										<input
+											v-model="inputModels.moneyToSave"
+											class="answer"
+											type="text"
+										/>
+									</span>
+								</div>
+							</div>
+
+							<div class="question">
+								<div class="question-block">
+									<span class="question-number">4</span>&nbsp;
+									<span class="question-title"
+										>If you are willing to deposit in a bank
+										with interest, please enter the amount
+										and %</span
+									>
+								</div>
+								<div class="warning-title">
+									Considering that interest is accrued on the
+									entire current amount, not on the amount of
+									the deposit.
+								</div>
+								<div class="answer-block answer-block-4">
+									<div>
+										<span class="answer-title"
+											>Amount of money:</span
+										><br />
+										<img
+											class="answer-point"
+											src="./assets/img/arrow-point.svg"
+											alt="arrow"
+										/>
+										<span
+											class="
+												answer-section answer-section-4
+											"
+										>
+											<input
+												v-model="
+													inputModels.usersInvestments
+														.amount
+												"
+												class="answer"
+												type="text"
+											/>
+										</span>
+									</div>
+									<div>
+										<span class="answer-title">
+											Percent:</span
+										><br />
+										<img
+											class="answer-point"
+											src="./assets/img/arrow-point.svg"
+											alt="arrow"
+										/>
+										<span
+											class="
+												answer-section answer-section-5
+											"
+										>
+											<input
+												v-model="
+													inputModels.usersInvestments
+														.percent
+												"
+												class="answer"
+												type="text"
+											/>
+										</span>
+									</div>
 								</div>
 							</div>
 						</div>
-						<div class="answer-block answer-block-2">
-							<span class="answer-title" v-if="isFromIncome">
-								Enter your income:
-							</span>
-							<span
-								class="asnwer-title"
-								v-if="isFromSpecificAmount"
-							>
-								Enter the amount of money: </span
-							><br />
-							<span class="answer-section answer-section-1">
-								<input
-									v-model="inputModels.usersMoney"
-									class="answer"
-									type="text"
-							/></span>
+						<div class="warning-message" v-if="isAnyError">
+							The entered values must not:
+							<ul>
+								<li>be negative</li>
+								<li>start with zero</li>
+								<li>
+									contain all symbols except integer numbers
+								</li>
+							</ul>
 						</div>
 					</div>
-
-					<div class="question">
-						<div class="question-block">
-							<span class="question-number">2</span>&nbsp;
-							<span class="question-title"
-								>Enter your monetary expenditures</span
-							>
-						</div>
-						<div class="answer-block">
-							<img
-								class="answer-point"
-								src="./assets/img/arrow-point.svg"
-								alt="arrow"
-							/>
-							<span class="answer-section answer-section-2">
-								<input
-									v-model="inputModels.usersExpenditures"
-									class="answer"
-									type="text"
-								/>
-							</span>
-						</div>
-					</div>
-
-					<div class="question">
-						<div class="question-block">
-							<span class="question-number">3</span>&nbsp;
-							<span class="question-title"
-								>Money that you can save each month</span
-							>
-						</div>
-						<div class="answer-block">
-							<img
-								class="answer-point"
-								src="./assets/img/arrow-point.svg"
-								alt="arrow"
-							/>
-							<span class="answer-section answer-section-3">
-								<input
-									v-model="inputModels.moneyToSave"
-									class="answer"
-									type="text"
-								/>
-							</span>
-						</div>
-					</div>
-
-					<div class="question">
-						<div class="question-block">
-							<span class="question-number">4</span>&nbsp;
-							<span class="question-title"
-								>If you are willing to deposit in a bank with
-								interest, please enter the amount and %</span
-							>
-						</div>
-						<div class="warning-title">
-							Considering that interest is accrued on the entire
-							current amount, not on the amount of the deposit.
-						</div>
-						<div class="answer-block answer-block-4">
-							<div>
-								<span class="answer-title"
-									>Amount of money:</span
-								><br />
-								<img
-									class="answer-point"
-									src="./assets/img/arrow-point.svg"
-									alt="arrow"
-								/>
-								<span class="answer-section answer-section-4">
-									<input
-										v-model="
-											inputModels.usersInvestments.amount
-										"
-										class="answer"
-										type="text"
-									/>
-								</span>
-							</div>
-							<div>
-								<span class="answer-title"> Percent:</span
-								><br />
-								<img
-									class="answer-point"
-									src="./assets/img/arrow-point.svg"
-									alt="arrow"
-								/>
-								<span class="answer-section answer-section-5">
-									<input
-										v-model="
-											inputModels.usersInvestments.percent
-										"
-										class="answer"
-										type="text"
-									/>
-								</span>
-							</div>
-						</div>
-					</div>
-
 					<div class="calculate-btn-wrapper">
 						<button
 							:class="{
@@ -223,7 +272,10 @@ export default {
 			const inputWrapper = document.querySelector(
 				`.answer-section-${id}`
 			);
-			if (/^[0-9]*$/.test(inputValue)) {
+			if (
+				/^[0-9]*$/.test(inputValue) &&
+				inputValue.toString()[0] !== "0"
+			) {
 				if (inputWrapper.classList.contains("invalid-input")) {
 					inputWrapper.classList.remove("invalid-input");
 					this.isAnyError = false;
@@ -375,6 +427,18 @@ export default {
 		padding: 50px 60px;
 		background-color: $primary-color;
 
+		.questions-wrapper {
+			position: relative;
+
+			.warning-message {
+				position: absolute;
+				top: 5%;
+				right: 5%;
+				padding: 10px;
+				width: 300px;
+				background-color: rgba(#ff4757, 0.4);
+			}
+		}
 		.question {
 			font-weight: bold;
 
